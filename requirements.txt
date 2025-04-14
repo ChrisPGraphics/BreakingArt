@@ -1,0 +1,12 @@
+opencv-python~=4.8.1.78
+numpy~=1.24.3
+numba~=0.58.0
+tqdm~=4.66.3
+scipy~=1.11.3
+shapely~=2.0.2
+bridson~=0.1.0
+scikit-image~=0.20.0
+Pillow~=10.0.0
+matplotlib~=3.7.3
+svgwrite~=1.4.3
+scikit-learn~=1.5.0

@@ -1,0 +1,3 @@
+from texton_categorization.base_categorization import BaseCategorization
+from texton_categorization.clustering_categorization import ClusteringCategorization, ColorCategorization, ColorAreaCompactnessCategorization
+from texton_categorization.lut_categorization import NearestColorCategorization, AreaPercentileCategorization, AreaBinaryThresholdCategorization, ConstantValueCategorization, UniqueColorCategorization       # noqa
