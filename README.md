@@ -1,6 +1,5 @@
 # BreakingArt
-The official code repository for the paper "Breaking Art: Synthesizing Abstract Expressionism Through Image Rearrangement"
-
+The official code repository for the paper [Breaking Art: Synthesizing Abstract Expressionism Through Image Rearrangement](https://doi.org/10.1016/j.cag.2025.104224) by Christopher Palazzolo, Oliver van Kaick, and David Mould
 
 ## Installation
 First, clone the repository to your local machine.
