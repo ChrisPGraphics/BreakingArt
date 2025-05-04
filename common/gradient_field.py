@@ -1,6 +1,7 @@
 import typing
 
 import numpy as np
+import numba
 
 import common
 
@@ -15,28 +16,51 @@ def interpolate(points, colors, density, position: np.ndarray, p: float = 3) -> 
     return numerator / denominator
 
 
-def rasterize(points, colors, density, size: tuple, p: float = 3) -> np.ndarray:
+@numba.jit(parallel=True, nopython=True)
+def rasterize(points, colors, density, size: tuple, p: float = 3, tile_size: int = 64) -> np.ndarray:
     width, height = size
+    out_image = np.zeros((height, width, 3), dtype=np.float32)
 
-    x_coords, y_coords = np.meshgrid(np.arange(width), np.arange(height))  # (height, width)
+    n_points = points.shape[0]
+    d0 = density * 0.25
 
-    pixel_positions = np.stack([y_coords.ravel(), x_coords.ravel()], axis=-1)  # (height*width, 2)
+    for y0 in range(0, height, tile_size):
+        for x0 in range(0, width, tile_size):
+            y1 = min(y0 + tile_size, height)
+            x1 = min(x0 + tile_size, width)
+            tile_h = y1 - y0
+            tile_w = x1 - x0
 
-    distances = np.linalg.norm(pixel_positions[:, np.newaxis, :] - points, axis=-1)  # (height*width, N)
+            for yi in range(tile_h):
+                for xi in range(tile_w):
+                    y = y0 + yi
+                    x = x0 + xi
 
-    weights = 1 / (distances + (density * 0.25)) ** p
+                    weights_sum = 0.0
+                    weights = np.empty(n_points, dtype=np.float32)
 
-    weights_sum = np.sum(weights, axis=1, keepdims=True)  # (height*width, 1)
-    normalized_weights = weights / weights_sum  # (height*width, N)
+                    # Compute weights
+                    for idx in range(n_points):
+                        dy = y - points[idx, 0]
+                        dx = x - points[idx, 1]
+                        dist = (dx * dx + dy * dy) ** 0.5
+                        weight = 1.0 / (dist + d0) ** p
+                        weights[idx] = weight
+                        weights_sum += weight
 
-    interpolated_r = np.sum(normalized_weights * colors[:, 0], axis=1)
-    interpolated_g = np.sum(normalized_weights * colors[:, 1], axis=1)
-    interpolated_b = np.sum(normalized_weights * colors[:, 2], axis=1)
+                    # Normalize and interpolate
+                    r, g, b = 0.0, 0.0, 0.0
+                    for idx in range(n_points):
+                        w = weights[idx] / (weights_sum + 1e-8)
+                        r += w * colors[idx, 0]
+                        g += w * colors[idx, 1]
+                        b += w * colors[idx, 2]
 
-    interpolated_image = np.stack([interpolated_r, interpolated_g, interpolated_b], axis=-1)
-    interpolated_image = interpolated_image.reshape(height, width, 3)
+                    out_image[y, x, 0] = r
+                    out_image[y, x, 1] = g
+                    out_image[y, x, 2] = b
 
-    return interpolated_image
+    return out_image
 
 
 class GradientField(common.SavableObject):
@@ -49,4 +73,3 @@ class GradientField(common.SavableObject):
         self.raster = raster
         self.density = density
         self.size = size
-
