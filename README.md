@@ -1,7 +1,7 @@
 # BreakingArt
 The official code repository for the paper "Breaking Art: Synthesizing Abstract Expressionism Through Image Rearrangement" by Christopher Palazzolo, Oliver van Kaick, and David Mould
 
-[[Paper](https://doi.org/10.1016/j.cag.2025.104224)] [[Project Page](https://chrispgraphics.github.io/2025_Breaking_art_Synthesizing_abstract_expressionism_through_image_rearrangement.html)] [[Art Gallery Tour](https://www.youtube.com/watch?v=JAzxg2WRWDw)]
+[[Paper](https://doi.org/10.1016/j.cag.2025.104224)] [[Project Page](https://chrispgraphics.github.io/2025-breaking-art.html)] [[Art Gallery Tour](https://www.youtube.com/watch?v=JAzxg2WRWDw)]
 
 ## Installation
 First, clone the repository to your local machine.
